@@ -1,0 +1,1 @@
+export { useEffectAfterMount } from './useEffectAfterMount';

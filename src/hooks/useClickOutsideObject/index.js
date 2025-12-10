@@ -1,0 +1,1 @@
+export { useClickOutsideObject } from './useClickOutsideObject';
