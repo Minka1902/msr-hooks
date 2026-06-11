@@ -6,7 +6,7 @@ import { useEffect } from 'react';
  */
 export function usePageLeave(handler) {
     useEffect(() => {
-        const onBeforeUnload = (e) => {
+        const onBeforeUnload = () => {
             handler?.();
         };
         const onVisibility = () => {

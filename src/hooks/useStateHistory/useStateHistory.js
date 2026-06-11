@@ -24,7 +24,7 @@ export function useStateHistory(initialState, options = {}) {
             const trimmed = updated.length > limit ? updated.slice(updated.length - limit) : updated;
             return trimmed;
         });
-        setPointer((prev) => {
+        setPointer(() => {
             const newLength = Math.min(pointer + 2, limit);
             return newLength - 1;
         });

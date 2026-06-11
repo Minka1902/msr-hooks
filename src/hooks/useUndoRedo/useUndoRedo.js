@@ -42,8 +42,13 @@ export function useUndoRedo(initialValue, { limit = 50 } = {}) {
         setState(value);
     }, [initialValue]);
 
+    // History and pointer are kept in refs but every mutation also calls
+    // setState, so these render-time reads are always in sync with the latest
+    // commit. Deriving the flags here avoids redundant state.
+    /* eslint-disable react-hooks/refs */
     const canUndo = pointerRef.current > 0;
     const canRedo = pointerRef.current < historyRef.current.length - 1;
+    /* eslint-enable react-hooks/refs */
 
     return { state, set, undo, redo, canUndo, canRedo, reset };
 }

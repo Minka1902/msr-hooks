@@ -1,0 +1,1 @@
+export { useParentWidth } from './useParentWidth';

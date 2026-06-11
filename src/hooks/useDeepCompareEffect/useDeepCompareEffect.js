@@ -31,10 +31,16 @@ export function useDeepCompareEffect(effect, deps) {
     const signalRef = useRef(0);
     const dependencyList = deps || [];
 
+    // Deep-compare-effect must track and bump a signal during render to decide
+    // whether the deeply-equal dependencies actually changed; this render-time
+    // ref access is fundamental to the hook.
     if (!previousDepsRef.current || !deepEqual(previousDepsRef.current, dependencyList)) {
         previousDepsRef.current = dependencyList;
         signalRef.current += 1;
     }
 
+    // The effect is forwarded from the caller, so its deps can't be inferred
+    // statically; the signal ref drives re-runs instead.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(effect, [signalRef.current]);
 }

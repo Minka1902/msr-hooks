@@ -12,7 +12,10 @@ export function useCountdown(seconds, options = {}) {
     const [isRunning, setIsRunning] = useState(false);
     const timerRef = useRef(null);
     const onCompleteRef = useRef(onComplete);
-    onCompleteRef.current = onComplete;
+
+    useEffect(() => {
+        onCompleteRef.current = onComplete;
+    });
 
     const clear = useCallback(() => {
         if (timerRef.current) {
@@ -31,6 +34,8 @@ export function useCountdown(seconds, options = {}) {
     useEffect(() => {
         if (!isRunning) return undefined;
         if (count <= 0) {
+            // Stop the timer if started while already at zero.
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setIsRunning(false);
             return undefined;
         }

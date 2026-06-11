@@ -24,6 +24,9 @@ export function useEventSource(url, options = {}) {
 
         const source = new EventSource(url, { withCredentials });
         sourceRef.current = source;
+        // Reset connection state when (re)subscribing to a new EventSource —
+        // synchronizing React state with an external system on subscribe.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setReadyState(0);
 
         source.onopen = () => setReadyState(1);

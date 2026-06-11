@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 /**
  * Throttle a changing value or function.
@@ -8,9 +8,13 @@ import { useCallback, useEffect, useRef, useState } from 'react';
  */
 export function useThrottle(value, limit = 500) {
     const [throttled, setThrottled] = useState(value);
-    const lastRan = useRef(Date.now());
+    const lastRan = useRef(null);
 
     useEffect(() => {
+        if (lastRan.current === null) {
+            lastRan.current = Date.now();
+        }
+
         const handler = setTimeout(() => {
             if (Date.now() - lastRan.current >= limit) {
                 setThrottled(value);

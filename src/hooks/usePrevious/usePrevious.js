@@ -12,5 +12,8 @@ export function usePrevious(value) {
         ref.current = value;
     }, [value]);
 
+    // Returns the value from the previous commit; reading the ref during render
+    // is the canonical implementation of this hook.
+    // eslint-disable-next-line react-hooks/refs
     return ref.current;
 }

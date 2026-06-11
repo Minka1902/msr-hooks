@@ -18,7 +18,10 @@ export function useWebSocket(url, options = {}) {
     const shouldReconnect = useRef(reconnect);
     const connectRef = useRef(() => {});
     const onMessageRef = useRef(onMessage);
-    onMessageRef.current = onMessage;
+
+    useEffect(() => {
+        onMessageRef.current = onMessage;
+    });
 
     const connect = useCallback(() => {
         if (typeof WebSocket === 'undefined' || !url) return;
@@ -41,7 +44,9 @@ export function useWebSocket(url, options = {}) {
         ws.onerror = () => setReadyState(ws.readyState);
     }, [url, protocols, reconnectInterval]);
 
-    connectRef.current = connect;
+    useEffect(() => {
+        connectRef.current = connect;
+    }, [connect]);
 
     const disconnect = useCallback(() => {
         shouldReconnect.current = false;
@@ -59,6 +64,9 @@ export function useWebSocket(url, options = {}) {
 
     useEffect(() => {
         shouldReconnect.current = reconnect;
+        // Open the socket on mount/url change — subscribing to an external
+        // system. connect() updates readyState as part of that setup.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         connect();
         return () => {
             shouldReconnect.current = false;

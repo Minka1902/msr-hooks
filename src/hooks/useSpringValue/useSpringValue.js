@@ -14,6 +14,8 @@ export function useSpringValue(target, config = {}) {
 
     useEffect(() => {
         if (typeof window === 'undefined') {
+            // No requestAnimationFrame available: snap straight to the target.
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setValue(target);
             return undefined;
         }

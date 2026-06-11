@@ -1,6 +1,6 @@
 {
   "name": "msr-hooks",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A comprehensive collection of production-ready React hooks for JavaScript and TypeScript projects",
   "private": false,
   "main": "src/index.js",

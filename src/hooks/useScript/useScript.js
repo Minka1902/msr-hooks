@@ -12,6 +12,8 @@ export function useScript(src, options = {}) {
 
     useEffect(() => {
         if (!src || typeof document === 'undefined') {
+            // Sync status when `src` is cleared after a previous load.
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setStatus('idle');
             return undefined;
         }

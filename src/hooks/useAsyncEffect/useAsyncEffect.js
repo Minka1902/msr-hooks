@@ -27,5 +27,8 @@ export function useAsyncEffect(effect, deps = []) {
                 cleanup();
             }
         };
+        // Deps are forwarded verbatim from the caller, so they can't be
+        // statically verified by the linter.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, deps);
 }

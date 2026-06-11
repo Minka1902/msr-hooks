@@ -35,5 +35,8 @@ export function useWhyDidYouUpdate(name, props) {
         previousProps.current = props;
     });
 
+    // Surface the changes recorded by the effect above; render-time read is
+    // intentional for this debugging hook.
+    // eslint-disable-next-line react-hooks/refs
     return changesRef.current;
 }
