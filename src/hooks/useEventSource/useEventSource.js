@@ -24,9 +24,11 @@ export function useEventSource(url, options = {}) {
 
         const source = new EventSource(url, { withCredentials });
         sourceRef.current = source;
-        setReadyState(0);
 
-        source.onopen = () => setReadyState(1);
+        source.onopen = () => {
+            setError(null);
+            setReadyState(1);
+        };
         source.onerror = (event) => {
             setError(event);
             setReadyState(source.readyState);

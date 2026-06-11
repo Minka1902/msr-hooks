@@ -12,7 +12,10 @@ export function useCountdown(seconds, options = {}) {
     const [isRunning, setIsRunning] = useState(false);
     const timerRef = useRef(null);
     const onCompleteRef = useRef(onComplete);
-    onCompleteRef.current = onComplete;
+
+    useEffect(() => {
+        onCompleteRef.current = onComplete;
+    }, [onComplete]);
 
     const clear = useCallback(() => {
         if (timerRef.current) {

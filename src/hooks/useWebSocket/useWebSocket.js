@@ -18,7 +18,6 @@ export function useWebSocket(url, options = {}) {
     const shouldReconnect = useRef(reconnect);
     const connectRef = useRef(() => {});
     const onMessageRef = useRef(onMessage);
-    onMessageRef.current = onMessage;
 
     const connect = useCallback(() => {
         if (typeof WebSocket === 'undefined' || !url) return;
@@ -41,7 +40,10 @@ export function useWebSocket(url, options = {}) {
         ws.onerror = () => setReadyState(ws.readyState);
     }, [url, protocols, reconnectInterval]);
 
-    connectRef.current = connect;
+    useEffect(() => {
+        connectRef.current = connect;
+        onMessageRef.current = onMessage;
+    }, [connect, onMessage]);
 
     const disconnect = useCallback(() => {
         shouldReconnect.current = false;

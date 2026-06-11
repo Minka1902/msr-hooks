@@ -12,7 +12,6 @@ export function useScript(src, options = {}) {
 
     useEffect(() => {
         if (!src || typeof document === 'undefined') {
-            setStatus('idle');
             return undefined;
         }
 
