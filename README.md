@@ -8,7 +8,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](https://www.typescriptlang.org/)
 
-**40+ hooks** • **TypeScript & JavaScript** • **SSR-Safe** • **Tree-Shakeable** • **Zero Dependencies**
+**55+ hooks** • **TypeScript & JavaScript** • **SSR-Safe** • **Tree-Shakeable** • **Zero Dependencies**
 
 </div>
 
@@ -31,7 +31,7 @@ pnpm add msr-hooks
 
 ## ✨ Features
 
-- 🎯 **40+ Production-Ready Hooks** - Cover all common use cases and advanced patterns
+- 🎯 **55+ Production-Ready Hooks** - Cover all common use cases and advanced patterns
 - 🔷 **Full TypeScript Support** - Complete type definitions included
 - 🌐 **SSR-Safe** - Proper guards for Next.js, Gatsby, and other SSR frameworks
 - 🌲 **Tree-Shakeable** - Import only what you need
@@ -115,6 +115,41 @@ pnpm add msr-hooks
 | `useAsyncEffect` | Async effect with AbortSignal |
 | `useDeepCompareEffect` | Effect with deep dependency comparison |
 | `useIsomorphicLayoutEffect` | SSR-safe useLayoutEffect |
+
+### 🧰 State Helpers (6 hooks)
+| Hook | Description |
+|------|-------------|
+| `useCounter` | Numeric counter with min/max/step controls |
+| `useArray` | Array state with push/removeAt/updateAt helpers |
+| `useMap` | Stateful Map with set/get/has/delete actions |
+| `useSet` | Stateful Set with add/toggle/delete actions |
+| `useStep` | Multi-step / wizard navigation state |
+| `useSessionStorage` | Persist state to sessionStorage |
+
+### 📱 Browser & Device APIs (6 hooks)
+| Hook | Description |
+|------|-------------|
+| `useGeolocation` | Track the user's location via the Geolocation API |
+| `useIdle` | Detect user inactivity after a threshold |
+| `useScript` | Dynamically load an external script + status |
+| `useBroadcastChannel` | Cross-tab messaging via BroadcastChannel |
+| `useScrollDirection` | Detect vertical scroll direction |
+| `useLongPress` | Press-and-hold gesture handlers |
+
+### 📡 Realtime & Async (3 hooks)
+| Hook | Description |
+|------|-------------|
+| `useWebSocket` | WebSocket connection with auto-reconnect |
+| `useEventSource` | Server-Sent Events (great for LLM token streams) |
+| `useCountdown` | Countdown timer with start/pause/reset |
+
+### 🐛 Dev & Debug (4 hooks)
+| Hook | Description |
+|------|-------------|
+| `useRenderCount` | Count how many times a component rendered |
+| `useWhyDidYouUpdate` | Log which props changed between renders |
+| `useUpdateEffect` | useEffect that skips the initial mount |
+| `useLatest` | Ref that always holds the latest value |
 
 ---
 
@@ -253,6 +288,178 @@ function Settings() {
     </button>
   );
 }
+```
+
+</details>
+
+### useCounter - Bounded Counter
+
+<details open>
+<summary>JavaScript</summary>
+
+```javascript
+import { useCounter } from 'msr-hooks';
+
+function Quantity() {
+  const { count, increment, decrement, reset } = useCounter(1, { min: 1, max: 10 });
+
+  return (
+    <div>
+      <button onClick={() => decrement()}>-</button>
+      <span>{count}</span>
+      <button onClick={() => increment()}>+</button>
+      <button onClick={reset}>Reset</button>
+    </div>
+  );
+}
+```
+
+</details>
+
+<details>
+<summary>TypeScript</summary>
+
+```typescript
+import { useCounter, type UseCounterReturn } from 'msr-hooks';
+
+const Quantity: React.FC = () => {
+  const { count, increment, decrement }: UseCounterReturn =
+    useCounter(1, { min: 1, max: 10 });
+
+  return (
+    <div>
+      <button onClick={() => decrement()}>-</button>
+      <span>{count}</span>
+      <button onClick={() => increment()}>+</button>
+    </div>
+  );
+};
+```
+
+</details>
+
+### useGeolocation - Track User Location
+
+<details open>
+<summary>JavaScript</summary>
+
+```javascript
+import { useGeolocation } from 'msr-hooks';
+
+function LocationDisplay() {
+  const { loading, latitude, longitude, error } = useGeolocation({
+    enableHighAccuracy: true
+  });
+
+  if (loading) return <p>Locating…</p>;
+  if (error) return <p>Unable to get location</p>;
+
+  return <p>You are at {latitude?.toFixed(4)}, {longitude?.toFixed(4)}</p>;
+}
+```
+
+</details>
+
+<details>
+<summary>TypeScript</summary>
+
+```typescript
+import { useGeolocation, type UseGeolocationReturn } from 'msr-hooks';
+
+const LocationDisplay: React.FC = () => {
+  const { loading, latitude, longitude }: UseGeolocationReturn =
+    useGeolocation();
+
+  if (loading) return <p>Locating…</p>;
+  return <p>{latitude}, {longitude}</p>;
+};
+```
+
+</details>
+
+### useEventSource - Stream Server-Sent Events (LLM tokens)
+
+<details open>
+<summary>JavaScript</summary>
+
+```javascript
+import { useEventSource } from 'msr-hooks';
+import { useEffect, useState } from 'react';
+
+function StreamingAnswer({ url }) {
+  const { data, readyState } = useEventSource(url);
+  const [text, setText] = useState('');
+
+  // Append each streamed token chunk as it arrives
+  useEffect(() => {
+    if (data) setText((prev) => prev + data);
+  }, [data]);
+
+  return (
+    <div>
+      <p>{text}</p>
+      {readyState === 1 && <span>● streaming…</span>}
+    </div>
+  );
+}
+```
+
+</details>
+
+<details>
+<summary>TypeScript</summary>
+
+```typescript
+import { useEventSource, type UseEventSourceReturn } from 'msr-hooks';
+
+const StreamingAnswer: React.FC<{ url: string }> = ({ url }) => {
+  const { data, readyState, close }: UseEventSourceReturn =
+    useEventSource(url);
+
+  return (
+    <div>
+      <p>{data}</p>
+      <button onClick={close} disabled={readyState !== 1}>Stop</button>
+    </div>
+  );
+};
+```
+
+</details>
+
+### useWhyDidYouUpdate - Debug Re-renders
+
+<details open>
+<summary>JavaScript</summary>
+
+```javascript
+import { useWhyDidYouUpdate } from 'msr-hooks';
+
+function ExpensiveChart(props) {
+  // Logs which props changed on every re-render
+  useWhyDidYouUpdate('ExpensiveChart', props);
+
+  return <Chart {...props} />;
+}
+```
+
+</details>
+
+<details>
+<summary>TypeScript</summary>
+
+```typescript
+import { useWhyDidYouUpdate } from 'msr-hooks';
+
+interface ChartProps {
+  data: number[];
+  color: string;
+}
+
+const ExpensiveChart: React.FC<ChartProps> = (props) => {
+  useWhyDidYouUpdate('ExpensiveChart', props);
+  return <Chart {...props} />;
+};
 ```
 
 </details>
