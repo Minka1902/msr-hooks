@@ -78,3 +78,11 @@ export { useRenderCount } from './useRenderCount';
 export { useWhyDidYouUpdate } from './useWhyDidYouUpdate';
 export { useUpdateEffect } from './useUpdateEffect';
 export { useLatest } from './useLatest';
+
+// Component primitives & UI state
+export { useControllableState } from './useControllableState';
+export { useFocusTrap } from './useFocusTrap';
+export { usePosition } from './usePosition';
+export { useListNavigation } from './useListNavigation';
+export { useAnimationFrame } from './useAnimationFrame';
+export { useMousePosition } from './useMousePosition';

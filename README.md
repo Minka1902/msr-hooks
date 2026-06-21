@@ -8,7 +8,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](https://www.typescriptlang.org/)
 
-**55+ hooks** • **TypeScript & JavaScript** • **SSR-Safe** • **Tree-Shakeable** • **Zero Dependencies**
+**61+ hooks** • **TypeScript & JavaScript** • **SSR-Safe** • **Tree-Shakeable** • **Zero Dependencies**
 
 </div>
 
@@ -31,7 +31,7 @@ pnpm add msr-hooks
 
 ## ✨ Features
 
-- 🎯 **55+ Production-Ready Hooks** - Cover all common use cases and advanced patterns
+- 🎯 **61+ Production-Ready Hooks** - Cover all common use cases and advanced patterns
 - 🔷 **Full TypeScript Support** - Complete type definitions included
 - 🌐 **SSR-Safe** - Proper guards for Next.js, Gatsby, and other SSR frameworks
 - 🌲 **Tree-Shakeable** - Import only what you need
@@ -150,6 +150,16 @@ pnpm add msr-hooks
 | `useWhyDidYouUpdate` | Log which props changed between renders |
 | `useUpdateEffect` | useEffect that skips the initial mount |
 | `useLatest` | Ref that always holds the latest value |
+
+### 🧩 Component Primitives (6 hooks)
+| Hook | Description |
+|------|-------------|
+| `useControllableState` | Merge controlled/uncontrolled value with onChange |
+| `useFocusTrap` | Trap focus in a container and restore it on close |
+| `usePosition` | Anchor a floating element with viewport flipping |
+| `useListNavigation` | Roving keyboard navigation for flat lists |
+| `useAnimationFrame` | requestAnimationFrame loop with delta/elapsed time |
+| `useMousePosition` | Track the cursor relative to an element and its center |
 
 ---
 
@@ -523,6 +533,42 @@ function Counter({ target }) {
   });
 
   return <div>{Math.round(animated)}</div>;
+}
+```
+
+### useControllableState - Controlled/Uncontrolled State
+
+```javascript
+import { useControllableState } from 'msr-hooks';
+
+function Toggle({ checked, defaultChecked, onChange }) {
+  // Works whether `checked` is passed (controlled) or not (uncontrolled).
+  const [value, setValue] = useControllableState({
+    value: checked,
+    defaultValue: defaultChecked ?? false,
+    onChange,
+  });
+
+  return <button onClick={() => setValue(!value)}>{value ? 'On' : 'Off'}</button>;
+}
+```
+
+### useAnimationFrame - Per-Frame Loop
+
+```javascript
+import { useRef } from 'react';
+import { useAnimationFrame } from 'msr-hooks';
+
+function Spinner({ running }) {
+  const ref = useRef(null);
+  const angle = useRef(0);
+
+  useAnimationFrame((deltaMs) => {
+    angle.current = (angle.current + deltaMs * 0.1) % 360;
+    if (ref.current) ref.current.style.transform = `rotate(${angle.current}deg)`;
+  }, running);
+
+  return <div ref={ref}>⟳</div>;
 }
 ```
 

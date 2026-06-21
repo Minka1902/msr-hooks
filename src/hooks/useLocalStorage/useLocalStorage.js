@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 /**
  * State synced to localStorage with JSON parsing and SSR guard.
@@ -9,18 +9,28 @@ import { useCallback, useEffect, useState } from 'react';
 export function useLocalStorage(key, initialValue) {
     const isBrowser = typeof window !== 'undefined';
 
-    const readValue = useCallback(() => {
-        if (!isBrowser) return initialValue;
-        try {
-            const item = window.localStorage.getItem(key);
-            return item ? JSON.parse(item) : initialValue;
-        } catch (error) {
-            console.warn('useLocalStorage read error', error);
-            return initialValue;
-        }
-    }, [initialValue, isBrowser, key]);
+    const read = useCallback(
+        (storageKey, fallback) => {
+            if (!isBrowser) return fallback;
+            try {
+                const item = window.localStorage.getItem(storageKey);
+                return item ? JSON.parse(item) : fallback;
+            } catch (error) {
+                console.warn('useLocalStorage read error', error);
+                return fallback;
+            }
+        },
+        [isBrowser]
+    );
 
-    const [storedValue, setStoredValue] = useState(readValue);
+    const [storedValue, setStoredValue] = useState(() => read(key, initialValue));
+
+    // Track the latest initialValue without making it a re-read dependency, so
+    // passing an inline literal (e.g. `[]`/`{}`) does not cause a render loop.
+    const initialValueRef = useRef(initialValue);
+    useEffect(() => {
+        initialValueRef.current = initialValue;
+    }, [initialValue]);
 
     const setValue = useCallback(
         (value) => {
@@ -36,9 +46,15 @@ export function useLocalStorage(key, initialValue) {
         [isBrowser, key, storedValue]
     );
 
+    // Re-read only when the key changes, never on initialValue identity changes.
+    const isFirstRun = useRef(true);
     useEffect(() => {
-        setStoredValue(readValue());
-    }, [readValue]);
+        if (isFirstRun.current) {
+            isFirstRun.current = false;
+            return;
+        }
+        setStoredValue(read(key, initialValueRef.current));
+    }, [key, read]);
 
     return [storedValue, setValue];
 }
